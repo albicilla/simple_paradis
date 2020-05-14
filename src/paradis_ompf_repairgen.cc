@@ -385,8 +385,8 @@ signed main(int argc, char** argv){
         printf("ERROR! too many datasize\n");
         return 1;  // 指定漏れがあった場合は自殺
     }
-    cout<<"現在の基数は"<<kisuu<<"です!"<<endl;
-    cout<<"この環境での最大スレッド数は"<<thread::hardware_concurrency()<<"です!"<<endl;
+    cout<<"radix="<<kisuu<<endl;
+    cout<<"thread::hardware_concurrency()="<<thread::hardware_concurrency()<<endl;
 
    
 
@@ -397,7 +397,7 @@ signed main(int argc, char** argv){
 
     cout<<" finish!"<<endl;cout<<endl;
     
-    cout<<"std::sort() is running..."<<endl;
+    cout<<"std::sort() is running..."<<flush;
     std::chrono::system_clock::time_point start,end;
     start = std::chrono::system_clock::now();
     
