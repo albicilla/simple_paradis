@@ -432,6 +432,5 @@ signed main(int argc, char** argv){
     elapsed = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end-start).count()/1000.0);
 
     printf("paradis time %lf[ms]\n",elapsed);
-    cout<<"swapNum="<<swapNum<<endl;
 }
 
