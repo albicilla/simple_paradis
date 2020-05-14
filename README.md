@@ -3,11 +3,9 @@ implemention of PARADIS - fast parallel radix sort algorithm. http://www.vldb.or
 
 Using this code, you can easily compare the execution time of std::sort and PARADIS.
 ## Requirements
-```sh
-CMake >= 3.50
-C++ Compiler >= C++17
-```
-
+* CMake `>= 3.50`
+* C++ Compiler `>= C++17`
+* OpenMP
 ## How to build
 ```sh
 mkdir build
