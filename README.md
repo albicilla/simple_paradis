@@ -1,5 +1,5 @@
 # simple_paradis
-implemention of PARADIS - fast parallel radix sort algorithm. http://www.vldb.org/pvldb/vol8/p1518-cho.pdf
+implementation of PARADIS - fast parallel radix sort algorithm. http://www.vldb.org/pvldb/vol8/p1518-cho.pdf
 
 Using this code, you can easily compare the execution time of std::sort and PARADIS.
 ## Requirements
