@@ -272,13 +272,10 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
 		  arr[head++]=v;
 		}
 	      }
-	    }
-	      
-	    
+	    }	    
 	}//end of omp pfp
 #pragma omp single
       {
-
 	int pfpN=kisuu/var_p;
 	int pfpM=kisuu%var_p;
 	pfp[0]=0;
@@ -290,12 +287,10 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
       }
 #pragma omp single
       SumCi=0;      
- 
 #pragma omp barrier
-
 #pragma omp for
-	for(int pID=0;pID<var_p;pID++){
-		for(int i=pfp[pID];i<pfp[pID+1];i++){
+	for(int k=0;k<var_p;k++){
+		for(int i=pfp[k];i<pfp[k+1];i++){
 		  int tail=gt[i];
 		  {
 		    for(int pID=0;pID<var_p;pID++){
@@ -320,7 +315,6 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
 		  gh[i]=tail;
 		}
 	}
-
 #pragma omp barrier
 #pragma omp single
 	{
