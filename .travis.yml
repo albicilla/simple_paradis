@@ -5,3 +5,4 @@ script:
     - cd build
     - cmake ..
     - make
+    - ./paradis_ompf_repairgen 4 100000000
