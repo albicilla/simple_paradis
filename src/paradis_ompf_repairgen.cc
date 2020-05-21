@@ -141,19 +141,6 @@ inline void insert_sort_core_(RandomIt s, RandomIt e)
 }
 
 
-
-double createHistTime=0.0;
-double paradisParmutateTime=0.0;
-double paradisRepairTime=0.0;
-double createGhGt=0.0;
-double quickSortTime = 0.0;
-double MiTime = 0.0;
-int localhistCall=0;
-int recum=0;
-int CallProcesses=0;
-int swapNum=0;
-int needRepairNum=0;
-int prefer_insert=0;
 template<class D,int kth_byte>
 inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
     int cnt[MaxKisuu];
@@ -170,7 +157,6 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
     for(int i=0;i<processes;i++){
       localHists[i]=(int*)malloc(sizeof(int)*kisuu);
     }
-    localhistCall+=elenum;
 
     int gh[MaxKisuu],gt[MaxKisuu],starts[MaxKisuu],ends[MaxKisuu];
     int ph[MaxThreadNum][MaxKisuu];
@@ -197,8 +183,7 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
 	  #pragma omp barrier
 	  #pragma omp for
 	  for(int i=start;i<start+elenum;i++){
-	    assert(arr[i]>=(D)0);
-	    D digit=determineDigitBucket(kth_byte,arr[i]);
+	    int digit=determineDigitBucket(kth_byte,arr[i]);
 	    localHists[th][digit]++;
 	  }
 	  #pragma omp barrier
@@ -353,6 +338,14 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
 	}
       }
     }
+}
+
+
+
+//INTERFACES
+template<class RandomIt>
+inline void PARADIS(RandomIt s,RandomIt e){
+    //    RadixSort
 }
 
 signed main(int argc, char** argv){
