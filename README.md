@@ -47,5 +47,7 @@ PARADIS is running... finish!
 paradis time 2015.222000[ms]
 ```
 
+## 参考文献
+Cho, M., Brand, D., Bordawekar, R., Finkler, U., Kulandaisamy, V., & Puri, R. (2015). PARADIS: an efficient parallel algorithm for in-place radix sort. Proceedings of the VLDB Endowment, 8(12), 1518–1529. https://doi.org/10.14778/2824032.2824050
 
 
