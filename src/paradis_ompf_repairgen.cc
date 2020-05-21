@@ -69,7 +69,7 @@ void makeDataset(){
     
     Dataset.clear();
 
-    std::uniform_int_distribution<long long> dist(0.0,INT_MAX);
+    std::uniform_int_distribution<int> dist(0.0,INT_MAX);
 
     random_device seed_gen;
     default_random_engine engine(seed_gen());
@@ -312,7 +312,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
 
 template<class RandomIt>
 inline void PARADIS(RandomIt s,RandomIt t,int threadNum){
-    PARADIS_core<3>(s,t,s,threadNum);
+    PARADIS_core<sizeof(int)-1>(s,t,s,threadNum);
 }
 
 
