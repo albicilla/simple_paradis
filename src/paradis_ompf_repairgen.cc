@@ -142,7 +142,7 @@ inline void insert_sort_core_(RandomIt s, RandomIt e)
 
 
 template<int kth_byte,class RandomIt>
-inline void PARADIS(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=1){
+inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=1){
     ll cnt[MaxKisuu]={0};
 
     ll elenum=distance(s,t);
@@ -220,21 +220,16 @@ inline void PARADIS(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=1){
                 for(int i=0;i<kisuu;i++){
                     ll head=ph[pID][i];
                     while(head<pt[pID][i]){
-                        //int v=arr[head];
                         int v=*(begin_itr+head);
                         int k=determineDigitBucket(kth_byte,v);
                         while(k!=i&&ph[pID][k]<pt[pID][k]){
-                            //_swap(v,arr[ph[pID][k]++]);
                             _swap(v,*(begin_itr+(int)ph[pID][k]));ph[pID][k]++;
                             k=determineDigitBucket(kth_byte,v);
                         }
                         if(k==i){
-                            //arr[head++]=arr[ph[pID][i]];
                             *(begin_itr+head)=*(begin_itr+ph[pID][i]);head++;
-                            //arr[ph[pID][i]++]=v;
                             *(begin_itr+ph[pID][i])=v;ph[pID][i]++;
                         }else{
-                            //arr[head++]=v;
                             *(begin_itr+head)=v;head++;
                         }
                     }
@@ -304,8 +299,7 @@ inline void PARADIS(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=1){
                 nextStageThreads=processes*(cnt[i]*(log(cnt[i])/log(kRadixBin))/(elenum*(log(elenum)/log(kRadixBin))));
                 if(cnt[i]>64LL){
                     #pragma omp task
-                    PARADIS<(kth_byte > 0 ? (kth_byte - 1) : 0)>(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]),begin_itr,max(nextStageThreads,1));
-                    //std::sort(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
+                    PARADIS_core<(kth_byte > 0 ? (kth_byte - 1) : 0)>(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]),begin_itr,max(nextStageThreads,1));
                 }else if(cnt[i]>1){
                     //insert_sort_core_(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
                     std::sort(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
@@ -313,9 +307,12 @@ inline void PARADIS(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=1){
             }
             #pragma omp taskwait
         }
-    }
-    
-    
+    }    
+}
+
+template<class RandomIt>
+inline void PARADIS(RandomIt s,RandomIt t,int threadNum){
+    PARADIS_core<3>(s,t,s,threadNum);
 }
 
 
@@ -373,11 +370,9 @@ signed main(int argc, char** argv){
        
     cout<<"PARADIS is running..."<<flush;
     start = std::chrono::system_clock::now();
-    //sortしたい目的の配列,levelの数,次のlevelに渡すindexの配列,levelの深さ
     omp_set_nested(1);
-    PARADIS<3>(Dataset.begin(),Dataset.end(),Dataset.begin(),threadNum);
+    PARADIS(Dataset.begin(),Dataset.end(),threadNum);
     end = std::chrono::system_clock::now();
-
 
     
     if(!issorted(Dataset)){
