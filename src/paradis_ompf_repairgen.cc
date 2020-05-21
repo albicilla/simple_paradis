@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <iterator>
 #include <climits>
+#include <omp.h>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ using namespace std;
 #define PERM(v) SORT(v);for(bool c##p=1;c##p;c##p=next_permutation(ALL(v)))
 #define printArr(x) for(auto itr:x)cerr<<"="<<itr<<endl
 
-#include <omp.h>
+
 
 class CppClock{
      public:
@@ -147,9 +148,9 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
 
     ll elenum=distance(s,t);
     ll start=distance(begin_itr,s);
-    assert(start>=0);assert(elenum>=0);
+    //assert(start>=0);assert(elenum>=0);
     //step1
-    assert(processes>0);
+    //assert(processes>0);
     ll part=elenum/processes;
     ll res=elenum%processes;
 
@@ -301,8 +302,8 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
                     #pragma omp task
                     PARADIS_core<(kth_byte > 0 ? (kth_byte - 1) : 0)>(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]),begin_itr,max(nextStageThreads,1));
                 }else if(cnt[i]>1){
-                    //insert_sort_core_(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
-                    std::sort(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
+                    insert_sort_core_(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
+                    //std::sort(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
                 }
             }
             #pragma omp taskwait
