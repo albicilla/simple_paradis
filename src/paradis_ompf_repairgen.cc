@@ -59,7 +59,7 @@ int threadNum;
 int NumRange=0;
 ll unsortCnt=0;
 
-std::vector<ll> Dataset;
+std::vector<int> Dataset;
 ll Datasize;
 
 
@@ -88,7 +88,7 @@ template<class D>
 bool issorted(std::vector<D>&arr){
     for(int i=0;i<arr.size()-1;i++){
         if(arr[i]>arr[i+1]){
-            std::cerr<<"i="<<i<<std::endl;
+            std::cerr<<"i="<<i<<" "<<arr[i]<<std::endl;                                             std::cerr<<"i+1="<<i+1<<" "<<arr[i+1]<<std::endl;
             return false;
         }
     }
@@ -141,11 +141,13 @@ inline void insert_sort_core_(RandomIt s, RandomIt e)
 }
 
 
-template<class RandomIt,int kth_byte>
-inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
+template<int kth_byte,class RandomIt>
+inline void PARADIS(RandomIt s,RandomIt t,int processes,RandomIt begin_itr){
     ll cnt[MaxKisuu]={0};
 
     ll elenum=distance(s,t);
+    ll start=distance(begin_itr,s);
+    assert(start>=0);assert(elenum>=0);
     //step1
     ll part=elenum/processes;
     ll res=elenum%processes;
@@ -155,7 +157,7 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
     ll ph[MaxThreadNum][MaxKisuu];
     ll pt[MaxThreadNum][MaxKisuu];
 
-    ll SumCi=0;
+    ll SumCi=elenum;
     ll pfp[processes+1];
     int var_p=processes;
 
@@ -168,8 +170,8 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
         }
         #pragma omp barrier
         #pragma omp for
-        for(auto itr=s;s<s+elenum;s++){
-            int digit=determineDigitBucket(kth_byte,*itr);
+        for(int i=start;i<start+elenum;i++){
+            int digit=determineDigitBucket(kth_byte,*(begin_itr+i));
             localHists[th][digit]++;
         }
         #pragma omp barrier
@@ -182,7 +184,7 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
         #pragma omp barrier
         #pragma omp single
         {
-            gh[0]=distance(begin_itr,s);
+            gh[0]=start;
             gt[0]=gh[0]+cnt[0];
             starts[0]=gh[0];
         }
@@ -193,7 +195,7 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
             gh[i]=gh[i-1]+cnt[i-1];
             //calc gti
             gt[i]=gh[i]+cnt[i];
-            starts[i]=ght[i];
+            starts[i]=gh[i];
         }
         #pragma omp barrier
         //step3
@@ -222,7 +224,7 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
                         int k=determineDigitBucket(kth_byte,v);
                         while(k!=i&&ph[pID][k]<pt[pID][k]){
                             //_swap(v,arr[ph[pID][k]++]);
-                            _swap(v,*(begin_itr+(ph[pID][k]++)));
+                            _swap(v,*(begin_itr+(int)ph[pID][k]));ph[pID][k]++;
                             k=determineDigitBucket(kth_byte,v);
                         }
                         if(k==i){
@@ -239,7 +241,7 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
             }//end of omp permute
             #pragma omp single
             {
-                nth=1;SumCi=0;
+                SumCi=0;
                 ll pfpN=kisuu/var_p;
                 ll pfpM=kisuu%var_p;
                 pfp[0]=0LL;
@@ -251,15 +253,15 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
             }
             #pragma omp barrier
             #pragma omp for
-            for(int k=0;k=processes;k++){
-                for(ll i=pfp[pID];i<pfp[pID+1];i++){
+            for(int k=0;k<processes;k++){
+                for(ll i=pfp[k];i<pfp[k+1];i++){
                     ll tail=gt[i];
                     {
                         for(int pID=0;pID<processes;pID++){
                             ll head=ph[pID][i];
                             while(head<pt[pID][i]&&head<tail){
                                 int v=*(begin_itr+head);head++;
-                                if(detemineDigitBucket(kth_byte,v)!=i){
+                                if(determineDigitBucket(kth_byte,v)!=i){
                                     while(head<=tail){
                                         --tail;
                                         int w=*(begin_itr+tail);
@@ -277,7 +279,7 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
                 }
             }
             #pragma omp barrier
-            #parama omp single
+            #pragma omp single
             {
                 int prevSumCi=SumCi;
                 SumCi-0;
@@ -301,9 +303,12 @@ inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
                 nextStageThreads=processes*(cnt[i]*(log(cnt[i])/log(kRadixBin))/(elenum*(log(elenum)/log(kRadixBin))));
                 if(cnt[i]>64LL){
                     #pragma omp task
-                    PARADIS<>
+                    PARADIS<(kth_byte > 0 ? (kth_byte - 1) : 0)>(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]),nextStageThreads,begin_itr);
+                }else if(cnt[i]>1){
+                    insert_sort_core_(begin_itr+starts[i],begin_itr+(starts[i]+cnt[i]));
                 }
             }
+            #pragma omp taskwait
         }
     }
     
@@ -544,7 +549,7 @@ signed main(int argc, char** argv){
     cout<<"creating dataset..."<<flush;
 
     makeDataset();
-    vector<ll> D(Dataset);
+    vector<int> D(Dataset);
 
     cout<<" finish!"<<endl;cout<<endl;
     
@@ -567,7 +572,7 @@ signed main(int argc, char** argv){
     start = std::chrono::system_clock::now();
     //sortしたい目的の配列,levelの数,次のlevelに渡すindexの配列,levelの深さ
     omp_set_nested(1);
-    RadixSort<ll,3>(Dataset,Datasize,0,threadNum);
+    PARADIS<3>(Dataset.begin(),Dataset.end(),threadNum,Dataset.begin());
     end = std::chrono::system_clock::now();
 
 
