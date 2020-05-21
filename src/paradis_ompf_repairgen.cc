@@ -141,6 +141,176 @@ inline void insert_sort_core_(RandomIt s, RandomIt e)
 }
 
 
+template<class RandomIt,int kth_byte>
+inline void PARADIS(RandomIt s,RandomIt t,int processes=1,RandomIt begin_itr){
+    ll cnt[MaxKisuu]={0};
+
+    ll elenum=distance(s,t);
+    //step1
+    ll part=elenum/processes;
+    ll res=elenum%processes;
+
+    ll localHists[MaxThreadNum][MaxKisuu];
+    ll gh[MaxKisuu],gt[MaxKisuu],starts[MaxKisuu],ends[MaxKisuu];
+    ll ph[MaxThreadNum][MaxKisuu];
+    ll pt[MaxThreadNum][MaxKisuu];
+
+    ll SumCi=0;
+    ll pfp[processes+1];
+    int var_p=processes;
+
+#pragma omp parallel num_threads(processes)
+    {
+        int th=omp_get_thread_num();
+        #pragma omp for
+        rep(i,kisuu){
+            rep(th,processes)localHists[th][i]=0;
+        }
+        #pragma omp barrier
+        #pragma omp for
+        for(auto itr=s;s<s+elenum;s++){
+            int digit=determineDigitBucket(kth_byte,*itr);
+            localHists[th][digit]++;
+        }
+        #pragma omp barrier
+        #pragma omp for
+        for(int i=0;i<kisuu;i++){
+            for(int j=0;j<processes;j++){
+                cnt[i]+=localHists[j][i];
+            }
+        }
+        #pragma omp barrier
+        #pragma omp single
+        {
+            gh[0]=distance(begin_itr,s);
+            gt[0]=gh[0]+cnt[0];
+            starts[0]=gh[0];
+        }
+        //step2
+        #pragma omp single
+        for(int i=1;i<kRadixBin;i++){
+            //calc ghi
+            gh[i]=gh[i-1]+cnt[i-1];
+            //calc gti
+            gt[i]=gh[i]+cnt[i];
+            starts[i]=ght[i];
+        }
+        #pragma omp barrier
+        //step3
+        while(SumCi!=0){
+            #pragma omp for
+            for(int ii=0;ii<processes;ii++){
+                int pID=omp_get_thread_num();
+                for(int i=0;i<kisuu;i++){
+                    ll part=(ll)(gt[i]-gh[i])/(ll)var_p;
+                    ll res=(ll)(gt[i]-gh[i])%(ll)(var_p);
+                    if(pID<var_p-1){
+                        ph[pID][i]=part*pID+gh[i];
+                        pt[pID][i]=part*(pID+1LL)+gh[i];
+                    }else{
+                        ph[pID][i]=part*pID+gh[i];
+                        pt[pID][i]=part*(pID+1LL)+gh[i]+res;
+                    }
+                }
+            
+
+                for(int i=0;i<kisuu;i++){
+                    ll head=ph[pID][i];
+                    while(head<pt[pID][i]){
+                        //int v=arr[head];
+                        int v=*(begin_itr+head);
+                        int k=determineDigitBucket(kth_byte,v);
+                        while(k!=i&&ph[pID][k]<pt[pID][k]){
+                            //_swap(v,arr[ph[pID][k]++]);
+                            _swap(v,*(begin_itr+(ph[pID][k]++)));
+                            k=determineDigitBucket(kth_byte,v);
+                        }
+                        if(k==i){
+                            //arr[head++]=arr[ph[pID][i]];
+                            *(begin_itr+head)=*(begin_itr+ph[pID][i]);head++;
+                            //arr[ph[pID][i]++]=v;
+                            *(begin_itr+ph[pID][i])=v;ph[pID][i]++;
+                        }else{
+                            //arr[head++]=v;
+                            *(begin_itr+head)=v;head++;
+                        }
+                    }
+                }
+            }//end of omp permute
+            #pragma omp single
+            {
+                nth=1;SumCi=0;
+                ll pfpN=kisuu/var_p;
+                ll pfpM=kisuu%var_p;
+                pfp[0]=0LL;
+                ll pfpMR=0LL;
+                for(ll i=1LL;i<var_p+1LL;i++){
+                    if(pfpMR<pfpM)pfpMR++;
+                    pfp[i]=i*pfpN+pfpMR;
+                }
+            }
+            #pragma omp barrier
+            #pragma omp for
+            for(int k=0;k=processes;k++){
+                for(ll i=pfp[pID];i<pfp[pID+1];i++){
+                    ll tail=gt[i];
+                    {
+                        for(int pID=0;pID<processes;pID++){
+                            ll head=ph[pID][i];
+                            while(head<pt[pID][i]&&head<tail){
+                                int v=*(begin_itr+head);head++;
+                                if(detemineDigitBucket(kth_byte,v)!=i){
+                                    while(head<=tail){
+                                        --tail;
+                                        int w=*(begin_itr+tail);
+                                        if(determineDigitBucket(kth_byte,w)==i){
+                                            *(begin_itr+(head-1))=w;
+                                            *(begin_itr+tail)=v;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    gh[i]=tail;
+                }
+            }
+            #pragma omp barrier
+            #parama omp single
+            {
+                int prevSumCi=SumCi;
+                SumCi-0;
+                for(int i=0;i<kisuu;i++){
+                    SumCi+=(gt[i]-gh[i]);
+                }
+            }
+            #pragma omp barrier
+        
+
+        
+        }//end of while
+    }//end of omp2
+
+    if(kth_byte>0){
+#pragma omp paralel num_threads(processes)
+        #pragma omp single
+        {
+            for(int i=0;i<kisuu;i++){
+                int nextStageThreads=1;
+                nextStageThreads=processes*(cnt[i]*(log(cnt[i])/log(kRadixBin))/(elenum*(log(elenum)/log(kRadixBin))));
+                if(cnt[i]>64LL){
+                    #pragma omp task
+                    PARADIS<>
+                }
+            }
+        }
+    }
+    
+    
+}
+
+
 template<class D,int kth_byte>
 inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
     int cnt[MaxKisuu];
@@ -341,12 +511,6 @@ inline void RadixSort(vector<D>& arr,int elenum,int start,int processes=1){
 }
 
 
-
-//INTERFACES
-template<class RandomIt>
-inline void PARADIS(RandomIt s,RandomIt e){
-    //    RadixSort
-}
 
 signed main(int argc, char** argv){
 
