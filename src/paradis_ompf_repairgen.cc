@@ -313,7 +313,8 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
 
 template<class RandomIt>
 inline void PARADIS(RandomIt s,RandomIt t,int threadNum){
-    PARADIS_core<typename std::iterator_traits<RandomIt>::value_type-1>(s,t,s,threadNum);
+    const size_t vsize=sizeof(typename std::iterator_traits<RandomIt>::value_type);
+    PARADIS_core<vsize-1>(s,t,s,threadNum);
 }
 
 
