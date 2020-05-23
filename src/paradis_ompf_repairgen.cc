@@ -313,7 +313,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
 
 template<class RandomIt>
 inline void PARADIS(RandomIt s,RandomIt t,int threadNum){
-    PARADIS_core<sizeof(int)-1>(s,t,s,threadNum);
+    PARADIS_core<typename std::iterator_traits<RandomIt>::value_type-1>(s,t,s,threadNum);
 }
 
 
@@ -325,7 +325,7 @@ signed main(int argc, char** argv){
         return 1;  // 指定漏れがあった場合は自殺
     }
     
-
+    
     threadNum = atoi(argv[1]);
 
     if(threadNum>MaxThreadNum){
