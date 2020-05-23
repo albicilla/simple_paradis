@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/deftio/travis-ci-cpp-example.svg?branch=master)](https://travis-ci.org/albicilla/simple_paradis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# simple_paradis
+# PARADIS
 Implementation of PARADIS - fast parallel radix sort algorithm. Paper URL http://www.vldb.org/pvldb/vol8/p1518-cho.pdf
 
 Using this code, you can easily compare the execution time of std::sort and PARADIS.
@@ -33,18 +33,18 @@ You can give the number of threads and number of data by command line arguments.
 
 Example
 ```sh
-./paradis_ompf_repairgen 4 100000000
+./paradis_ompf_repairgen 64 100000000
 ```
 
-Example result (In my environment)
+Example result
 ```sh
 creating dataset... finish!
 
 std::sort() is running... finish!
-std::sort time 9577.141000[ms]
+std::sort time 8426.495000[ms]
 
 PARADIS is running... finish!
-paradis time 2015.222000[ms]
+paradis time 198.198000[ms]
 ```
 
 ## 参考文献
