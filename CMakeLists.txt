@@ -25,7 +25,8 @@ add_compile_options(
   -mcx16
 )
 
+
  
 # main.cpp
 add_executable(paradis_ompf_repairgen ${HEADERS} src/paradis_ompf_repairgen.cc)
-
+add_executable(paradis src/paradis_test.cc)
