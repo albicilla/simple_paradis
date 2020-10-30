@@ -292,7 +292,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
     }//end of omp2
 
     if(kth_byte>0){
-#pragma omp paralel num_threads(processes)
+#pragma omp parallel num_threads(processes)
         #pragma omp single
         {
             for(int i=0;i<kisuu;i++){
