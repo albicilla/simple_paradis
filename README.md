@@ -28,7 +28,7 @@ make
 ## How to run
 You can give the number of threads and number of data by command line arguments.
 ```sh
-./paradis_ompf_repairgen <number of threads> <number of data>
+./paradis <number of threads> <number of data>
 ```
 
 Example
