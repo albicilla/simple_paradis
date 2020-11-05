@@ -33,7 +33,7 @@ You can give the number of threads and number of data by command line arguments.
 
 Example
 ```sh
-./paradis_ompf_repairgen 64 100000000
+./paradis 64 100000000
 ```
 
 Example result
