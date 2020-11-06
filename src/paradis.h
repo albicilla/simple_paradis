@@ -12,24 +12,13 @@
 #include <climits>
 #include <omp.h>
 
-#define INF 1e9
 #define FOR(i,a,b) for(int i=a;i<b;i++)
 #define rep(i,b) FOR(i,0,b)
-#define dump(x) cerr<<#x<<"="<<x<<endl
-#define ALL(a) (a).begin(),(a).end()
-#define EACH(e,v) for(auto& e:v)
-#define SORT(v) sort(ALL(v))
-#define PERM(v) SORT(v);for(bool c##p=1;c##p;c##p=next_permutation(ALL(v)))
-#define printArr(x) for(auto itr:x)cerr<<"="<<itr<<endl
 
-const int kisuu=256;
 const int MaxThreadNum=224;
 const long long MaxDataSize=10000000000;
 const long long MaxDataNum=4294967295;
 const int MaxKisuu=256;
-int threadNum;
-int NumRange=0;
-long long unsortCnt=0;
 
 std::vector<int> Dataset;
 long long Datasize;
@@ -38,8 +27,6 @@ static const int kRadixBits = 8;
 static const size_t kInsertSortThreshold = 0;
 static const int kRadixMask = (1 << kRadixBits) - 1;
 static const int kRadixBin = 1 << kRadixBits;
-
-
 
 template<class D>
 inline int determineDigitBucket(int stage,D num){
@@ -109,7 +96,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
     {
         int th=omp_get_thread_num();
         #pragma omp for
-        rep(i,kisuu){
+        rep(i,kRadixBin){
             rep(t,processes)localHists[t][i]=0;
         }
         #pragma omp barrier
@@ -120,7 +107,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
         }
         #pragma omp barrier
         #pragma omp for
-        for(int i=0;i<kisuu;i++){
+        for(int i=0;i<kRadixBin;i++){
             for(int j=0;j<processes;j++){
                 cnt[i]+=localHists[j][i];
             }
@@ -147,7 +134,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
             #pragma omp for
             for(int ii=0;ii<processes;ii++){
                 int pID=omp_get_thread_num();
-                for(int i=0;i<kisuu;i++){
+                for(int i=0;i<kRadixBin;i++){
                     long long part=(long long)(gt[i]-gh[i])/(long long)var_p;
                     long long res=(long long)(gt[i]-gh[i])%(long long)(var_p);
                     if(pID<var_p-1){
@@ -160,7 +147,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
                 }
             
 
-                for(int i=0;i<kisuu;i++){
+                for(int i=0;i<kRadixBin;i++){
                     long long head=ph[pID][i];
                     while(head<pt[pID][i]){
                         int v=*(begin_itr+head);
@@ -181,8 +168,8 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
             #pragma omp single
             {
                 SumCi=0;
-                long long pfpN=kisuu/var_p;
-                long long pfpM=kisuu%var_p;
+                long long pfpN=kRadixBin/var_p;
+                long long pfpM=kRadixBin%var_p;
                 pfp[0]=0LL;
                 long long pfpMR=0LL;
                 for(long long i=1LL;i<var_p+1LL;i++){
@@ -222,7 +209,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
             {
                 int prevSumCi=SumCi;
                 SumCi-0;
-                for(int i=0;i<kisuu;i++){
+                for(int i=0;i<kRadixBin;i++){
                     SumCi+=(gt[i]-gh[i]);
                 }
             }
@@ -237,7 +224,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
 #pragma omp parallel num_threads(processes)
         #pragma omp single
         {
-            for(int i=0;i<kisuu;i++){
+            for(int i=0;i<kRadixBin;i++){
                 int nextStageThreads=1;
                 nextStageThreads=processes*(cnt[i]*(log(cnt[i])/log(kRadixBin))/(elenum*(log(elenum)/log(kRadixBin))));
                 if(cnt[i]>64LL){
