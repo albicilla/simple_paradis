@@ -150,7 +150,7 @@ inline void PARADIS_core(RandomIt s,RandomIt t,RandomIt begin_itr,int processes=
                 for(int i=0;i<kRadixBin;i++){
                     long long head=ph[pID][i];
                     while(head<pt[pID][i]){
-                        int v=*(begin_itr+head);
+                        auto v=*(begin_itr+head);
                         int k=determineDigitBucket(kth_byte,v);
                         while(k!=i&&ph[pID][k]<pt[pID][k]){
                             _swap(v,*(begin_itr+(int)ph[pID][k]));ph[pID][k]++;
