@@ -15,10 +15,9 @@
 #include <thread>
 #include <vector>
 
-#define RADIX_BITS 8
-
 namespace paradis {
 
+static const size_t RADIX_BITS = 8;
 static const size_t MaxKisuu = 1 << RADIX_BITS;
 static const size_t kRadixMask = (1 << RADIX_BITS) - 1;
 static const size_t kRadixBin = 1 << RADIX_BITS;

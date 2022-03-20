@@ -31,7 +31,7 @@ public:
 
 int main(int argc, char **argv) {
   if (argc != 3) {
-    printf("ERROR! Usage: ./paradis <num_threads> <num_elements>\n");
+    printf("ERROR! Usage: ./paradis <num_threads> <num_keys>\n");
     return 1;
   }
 
