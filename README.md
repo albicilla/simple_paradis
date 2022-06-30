@@ -4,14 +4,10 @@
 # PARADIS
 Implementation of PARADIS - fast parallel radix sort algorithm. Paper URL http://www.vldb.org/pvldb/vol8/p1518-cho.pdf
 
-Using this code, you can easily compare the execution time of std::sort and PARADIS.
+PARADIS:An Efficient Parallel Algorithm for In-place Radix sort (cho et al. VLDB 2015)
 
-PARADIS:An Efficient Parallel Algorithm for In-place Radix sort (cho et al. VLDB 2015)の実装です。
-
-MSD radix sortとして実装してあります。
-
-number of data <= 2^32
-number of threads には thread::hardware_concurrency() 以下の値を推奨します。
+number of data <= 2^32, type int
+number of threads  thread::hardware_concurrency() 
 
 ## Requirements
 * CMake `>= 3.50`
@@ -47,7 +43,7 @@ PARADIS is running... finish!
 paradis time 198.198000[ms]
 ```
 
-## 参考文献
+## Ref
 Cho, M., Brand, D., Bordawekar, R., Finkler, U., Kulandaisamy, V., & Puri, R. (2015). PARADIS: an efficient parallel algorithm for in-place radix sort. Proceedings of the VLDB Endowment, 8(12), 1518–1529. https://doi.org/10.14778/2824032.2824050
 
 
